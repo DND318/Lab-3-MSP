@@ -1,0 +1,8 @@
+Light.c:8:6:Red1Green2	8	static
+Light.c:16:6:Red1Yellow2	8	static
+Light.c:24:6:Green1Red2	8	static
+Light.c:32:6:Yellow1Red2	8	static
+Light.c:40:6:Green1Green2	8	static
+Light.c:49:6:Red1Red2	8	static
+Light.c:58:6:Yellow1Yellow2	8	static
+Light.c:67:6:display7SEG	16	static
