@@ -26,7 +26,8 @@
 #include "button.h"
 #include "global.h"
 #include "fsm_normal.h"
-#include "7SEG_DISPLAY.h"
+#include "Light.h"
+#include "modifyLed.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -102,9 +103,8 @@ int main(void)
   status = INIT;
   while (1)
   {
-//	  fsm_normal_run1();
-//	  fsm_normal_run2();
-	 // displayMode(MODE);
+	  fsm_normal_run();
+	  fsm_modify_run();
 
 
     /* USER CODE END WHILE */
