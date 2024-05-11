@@ -1,91 +1,105 @@
-/*
- * fsm_normal.c
- *
- *  Created on: May 6, 2024
- *      Author: Dell
- */
-
 #include "fsm_normal.h"
+#include "software_timer.h"
+#include "Light.h"
+#include "global.h"
+#include "button.h"
 
-void fsm_normal_run1(){
-	switch(status){
-	case INIT:
-		HAL_GPIO_WritePin(GPIOA, LED_GREEN1_Pin|LED_GREEN2_Pin|LED_YELLOW1_Pin|LED_YELLOW2_Pin|LED_RED1_Pin|LED_RED2_Pin, GPIO_PIN_SET);
-		status = AUTO_RED;
-		setTimer1(500);
-		setTimer2(500);
-		break;
 
-	case AUTO_RED:
-		HAL_GPIO_WritePin(LED_RED1_GPIO_Port, LED_RED1_Pin, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(LED_YELLOW1_GPIO_Port, LED_YELLOW1_Pin, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(LED_GREEN1_GPIO_Port, LED_GREEN1_Pin, GPIO_PIN_RESET);
-		if(timer1_flag ==1){
-			status = AUTO_GREEN;
-			setTimer1(3000);
-		}
-		break;
-	case AUTO_GREEN:
-		HAL_GPIO_WritePin(LED_RED1_GPIO_Port, LED_RED1_Pin, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(LED_YELLOW1_GPIO_Port, LED_YELLOW1_Pin, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(LED_GREEN1_GPIO_Port, LED_GREEN1_Pin, GPIO_PIN_SET);
+void fsm_normal_run() {
+	switch(LedStatus){
+		case INIT:
+			Red1Green2();
+			LedStatus = RED_GREEN;
+			setTimer0(NORMAL_GREEN*100);
+			setTimer1(1);
+			setTimer2(100);
+			break;
+		case RED_GREEN:
+			Red1Green2();
+			if (timer0_flag == 1){
+				LedStatus = RED_YELLOW;
+				count1 = NORMAL_YELLOW;
+				count2 = NORMAL_YELLOW;
+				setTimer0(NORMAL_YELLOW*100);
+			}
+			if (is_button_pressed(0) == 1){
+					LedStatus = MAN_RED;
+					mode = 2;
+					setTimer3(20);
+					setTimer0(1000);
+			}
+			break;
 
-		if(timer1_flag ==1){
-			status = AUTO_YELLOW;
-			setTimer1(2000);
-		}
-		break;
-	case AUTO_YELLOW:
-		HAL_GPIO_WritePin(LED_RED1_GPIO_Port, LED_RED1_Pin, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(LED_YELLOW1_GPIO_Port, LED_YELLOW1_Pin, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(LED_GREEN1_GPIO_Port, LED_GREEN1_Pin, GPIO_PIN_RESET);
-		if(timer1_flag ==1){
-			status = AUTO_RED;
-			setTimer1(5000);
-		}
-		break;
-	default:
-		break;
+		case RED_YELLOW:
+			Red1Yellow2();
+			if (timer0_flag == 1){
+				LedStatus = GREEN_RED;
+				count1 = NORMAL_GREEN;
+				count2 = NORMAL_RED;
+				setTimer0(NORMAL_GREEN*100);
+			}
+			break;
+			if (is_button_pressed(0) == 1){
+					LedStatus = MAN_RED;
+					mode = 2;
+					setTimer3(20);
+					setTimer0(1000);
+			}
+		case GREEN_RED:
+			Green1Red2();
+			if (timer0_flag == 1){
+				LedStatus = YELLOW_RED;
+				count1 = NORMAL_YELLOW;
+				count2= NORMAL_YELLOW;
+				setTimer0(NORMAL_YELLOW*100);
+			}
+			if (is_button_pressed(0) == 1){
+					LedStatus = MAN_GREEN;
+					mode = 2;
+					setTimer3(20);
+					setTimer0(1000);
+			}
+			break;
+
+		case YELLOW_RED:
+			Yellow1Red2();
+			if (timer0_flag == 1){
+				LedStatus = RED_GREEN;
+				count1 = NORMAL_RED;
+				count2 = NORMAL_GREEN;
+				setTimer0(NORMAL_GREEN*100);
+			}
+			if (is_button_pressed(0) == 1){
+					LedStatus = MAN_YELLOW;
+					mode = 2;
+					setTimer3(20);
+					setTimer0(1000);
+			}
+			break;
+		default:
+			break;
 	}
-}
+	// decrease time each second
+	if (timer2_flag == 1){
+		count1--;
+		count2--;
+		setTimer2(100);
+	}
+	// display 7seg
+	if (timer1_flag == 1){
+		  handle7SEG();
+		  setTimer1(1);
+	 }
 
-void fsm_normal_run2(){
-	switch(status){
-	case INIT:
-		HAL_GPIO_WritePin(LED_RED2_GPIO_Port,LED_RED2_Pin , GPIO_PIN_SET);
-		HAL_GPIO_WritePin(LED_YELLOW2_GPIO_Port,LED_YELLOW2_Pin , GPIO_PIN_SET);
-		HAL_GPIO_WritePin(LED_GREEN2_GPIO_Port,LED_GREEN2_Pin , GPIO_PIN_SET);
-		status = AUTO_GREEN;
-		setTimer2(5000);
-		break;
-	case AUTO_GREEN:
-		HAL_GPIO_WritePin(LED_RED2_GPIO_Port, LED_RED2_Pin, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(LED_YELLOW2_GPIO_Port, LED_YELLOW2_Pin, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(LED_GREEN2_GPIO_Port, LED_GREEN2_Pin, GPIO_PIN_RESET);
-		if(timer2_flag ==1){
-			status = AUTO_YELLOW;
-			setTimer2(2000);
-		}
-		break;
-	case AUTO_YELLOW:
-		HAL_GPIO_WritePin(LED_RED2_GPIO_Port, LED_RED2_Pin, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(LED_YELLOW2_GPIO_Port, LED_YELLOW2_Pin, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(LED_GREEN2_GPIO_Port, LED_GREEN2_Pin, GPIO_PIN_RESET);
-		if(timer2_flag ==1){
-			status = AUTO_RED;
-			setTimer2(3000);
-		}
-		break;
-	case AUTO_RED:
-		HAL_GPIO_WritePin(LED_RED2_GPIO_Port, LED_RED2_Pin, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(LED_YELLOW2_GPIO_Port, LED_YELLOW2_Pin, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(LED_GREEN2_GPIO_Port, LED_GREEN2_Pin, GPIO_PIN_SET);
-		if(timer2_flag ==1){
-			status = AUTO_GREEN;
-			setTimer2(5000);
-		}
-		break;
-	default:
-		break;
+
+}
+void handle7SEG() {
+	switch (mode){
+		case 1:
+			update7SEG();
+			break;
+		default:
+			update7SEG_2(countMan1);
+			break;
 	}
 }
