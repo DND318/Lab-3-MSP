@@ -6,9 +6,9 @@
  */
 
 #include "global.h"
-int RED = 5;
-int YELLOW = 2;
-int GREEN = 3;
+int NORMAL_RED = 5;
+int NORMA_YELLOW = 2;
+int NORMAL_GREEN = 3;
 
 int LedStatus = INIT;
 
