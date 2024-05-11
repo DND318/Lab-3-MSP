@@ -9,13 +9,13 @@
 #define INC_LIGHT_H_
 
 #include "global.h"
-void Red1Green2();
-void Red1Yellow2();
-void Green1Red2();
-void Yellow1Red2();
-void Green1Green2();
-void Yellow1Yellow2();
-void Red1Red2();
+void RedGreen();
+void RedYellow();
+void GreenRed();
+void YellowRed();
+void GreenGreen();
+void YellowYellow();
+void RedRed();
 
 void display7SEG(int index);
 
