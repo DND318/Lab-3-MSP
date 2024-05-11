@@ -10,7 +10,15 @@
 
 #include "global.h"
 
-void fsm_normal_run1();
-void fsm_normal_run2();
+#define INIT 		1
+#define RED_GREEN 	2
+#define RED_YELLOW 	3
+#define GREEN_RED	4
+#define	YELLOW_RED 	5
+
+#include "global.h"
+
+void fsm_auto_run();
+void handle7SEG();
 
 #endif /* INC_FSM_NORMAL_H_ */
